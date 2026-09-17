@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -20,7 +21,7 @@ def create_review_queue(segments: pd.DataFrame, path: str | Path | None = None, 
     """Create a CSV-friendly queue, strictly prioritising UNKNOWN segments."""
     queue = pd.DataFrame(index=segments.index)
     queue["segment_id"] = _id_column(segments)
-    queue["symbol"] = segments["symbol"] if "symbol" in segments else pd.NA
+    queue["symbol"] = segments.get("symbol", pd.NA)
     queue["start_timestamp"] = segments[next((c for c in ("start_timestamp", "start") if c in segments), "segment_id")] if any(c in segments for c in ("start_timestamp", "start")) else pd.NA
     queue["end_timestamp"] = segments[next((c for c in ("end_timestamp", "end") if c in segments), "segment_id")] if any(c in segments for c in ("end_timestamp", "end")) else pd.NA
     source = next((x for x in ("label", "display_label", "predicted_label", "hard_label") if x in segments), None)
@@ -35,7 +36,7 @@ def create_review_queue(segments: pd.DataFrame, path: str | Path | None = None, 
             reason.eq("unreviewed_candidate"), "unreviewed_candidate",
             np.where(unknown, "model_abstention", "classified"),
         )
-    queue["suggested_semantic_label"] = segments["suggested_semantic_label"] if "suggested_semantic_label" in segments else pd.NA
+    queue["suggested_semantic_label"] = segments.get("suggested_semantic_label", pd.NA)
     sources = {"max_probability": ("max_probability", "confidence", "max_posterior"), "normalized_entropy": ("normalized_entropy", "entropy"), "recognizability": ("recognizability", "recognizability_score"), "unknown_reason": ("unknown_reason", "abstention_reason")}
     for target, options in sources.items():
         column = next((x for x in options if x in segments), None)
@@ -125,7 +126,7 @@ def build_stratified_review_sample(
     unknown = data[data["_label"].str.upper().eq("UNKNOWN")]
     known = data[~data.index.isin(unknown.index)]
     total = min(target_size, len(data))
-    unknown_n = min(len(unknown), int(round(total * unknown_share)))
+    unknown_n = min(len(unknown), round(total * unknown_share))
     known_n = min(len(known), total - unknown_n)
     unknown_n = min(len(unknown), unknown_n + max(0, total - unknown_n - known_n))
     selected = pd.concat([balanced(unknown, unknown_n), balanced(known, known_n)])

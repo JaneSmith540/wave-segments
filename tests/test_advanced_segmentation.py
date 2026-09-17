@@ -2,8 +2,16 @@ import numpy as np
 import pandas as pd
 
 from wave_segments.config import SegmentationConfig
-from wave_segments.segmentation import _bocpd_boundaries, _fractal_boundaries, segment_ohlcv, segment_ohlcv_causal
-from wave_segments.stability import bootstrap_boundary_stability, bootstrap_causal_boundary_stability
+from wave_segments.segmentation import (
+    _bocpd_boundaries,
+    _fractal_boundaries,
+    segment_ohlcv,
+    segment_ohlcv_causal,
+)
+from wave_segments.stability import (
+    bootstrap_boundary_stability,
+    bootstrap_causal_boundary_stability,
+)
 
 
 def regime_bars():

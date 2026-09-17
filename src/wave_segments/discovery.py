@@ -6,8 +6,8 @@ and supervised-classification stages, not to predict returns or select stocks.
 """
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
-from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -16,7 +16,6 @@ from sklearn.mixture import BayesianGaussianMixture, GaussianMixture
 from sklearn.preprocessing import RobustScaler
 
 from .model import UNKNOWN, infer_feature_columns
-
 
 _FORWARD_TOKENS = ("future", "forward", "target", "label", "return_5d", "return_20d", "return_60d")
 
@@ -104,7 +103,7 @@ class MultiModelDiscoverer:
         values = values.fillna(self.medians_).fillna(0.0)
         return self.scaler.fit_transform(values) if fit else self.scaler.transform(values)
 
-    def fit(self, segments: pd.DataFrame) -> "MultiModelDiscoverer":
+    def fit(self, segments: pd.DataFrame) -> MultiModelDiscoverer:
         if len(segments) < 2:
             raise ValueError("At least two segments are required for discovery")
         X = self._matrix(segments, fit=True)

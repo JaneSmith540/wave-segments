@@ -10,7 +10,6 @@ import pandas as pd
 from wave_segments.data import load_local
 from wave_segments.visualization import _plt, plot_segmented_candles
 
-
 COLORS = {
     "CLUSTER_A": "#2e86de", "CLUSTER_B": "#e67e22", "CLUSTER_C": "#8e44ad",
     "CLUSTER_D": "#16a085", "CLUSTER_E": "#c0392b", "UNKNOWN": "#7f8c8d",

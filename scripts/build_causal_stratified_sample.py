@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 import argparse
-from hashlib import blake2b
 import json
+from hashlib import blake2b
 from pathlib import Path
 
 import pandas as pd
@@ -12,7 +12,7 @@ from wave_segments.fullmarket_segments import _prices_for_segmentation
 
 
 def _rank(seed: int, symbol: str) -> bytes:
-    return blake2b(f"{seed}:{symbol}".encode("utf-8"), digest_size=16).digest()
+    return blake2b(f"{seed}:{symbol}".encode(), digest_size=16).digest()
 
 
 def main() -> None:

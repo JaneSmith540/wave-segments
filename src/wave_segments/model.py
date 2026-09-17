@@ -7,8 +7,8 @@ result.
 """
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import asdict
-from typing import Iterable, Sequence
 
 import numpy as np
 import pandas as pd
@@ -17,7 +17,6 @@ from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import RobustScaler
 
 from .config import ModelConfig
-
 
 UNKNOWN = "UNKNOWN"
 _NON_FEATURES = {
@@ -80,7 +79,7 @@ class SegmentSoftClassifier:
         values = values.fillna(medians).fillna(0.0)
         return self.scaler.fit_transform(values) if fit else self.scaler.transform(values)
 
-    def fit(self, segments: pd.DataFrame) -> "SegmentSoftClassifier":
+    def fit(self, segments: pd.DataFrame) -> SegmentSoftClassifier:
         if len(segments) < 2:
             raise ValueError("At least two segments are required to fit a soft classifier")
         X = self._matrix(segments, fit=True)

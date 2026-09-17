@@ -110,7 +110,7 @@ def segment_distribution(segments: pd.DataFrame, *, short_threshold: int = 5) ->
         raise ValueError("segments missing n_bars")
     lengths = pd.to_numeric(segments.n_bars, errors="coerce").dropna()
     return {
-        "segments": int(len(lengths)),
+        "segments": len(lengths),
         "median_bars": float(lengths.median()) if len(lengths) else float("nan"),
         "p10_bars": float(lengths.quantile(.1)) if len(lengths) else float("nan"),
         "p90_bars": float(lengths.quantile(.9)) if len(lengths) else float("nan"),

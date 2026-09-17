@@ -11,7 +11,10 @@ import pandas as pd
 from wave_segments.config import SegmentationConfig
 from wave_segments.schema import normalize_ohlcv
 from wave_segments.segmentation import segment_ohlcv_causal
-from wave_segments.segmentation_sensitivity import compare_causal_boundaries, segment_distribution
+from wave_segments.segmentation_sensitivity import (
+    compare_causal_boundaries,
+    segment_distribution,
+)
 
 
 def main() -> None:
@@ -81,7 +84,7 @@ def main() -> None:
 
     audit = {
         "input": str(Path(args.bars).resolve()),
-        "input_rows": int(len(bars)),
+        "input_rows": len(bars),
         "symbols": int(bars.symbol.nunique()),
         "date_min": str(bars.timestamp.min()),
         "date_max": str(bars.timestamp.max()),

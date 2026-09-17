@@ -1,18 +1,18 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
-import json
 
 import numpy as np
 import pandas as pd
 
 from .analytics import build_descriptions, build_transition_matrix, build_tree_rules
 from .config import PipelineConfig
-from .features import extract_segment_features
-from .model import ProbabilisticWaveModel
 from .discovery import DiscoveryConfig, MultiModelDiscoverer
 from .duration import causal_duration_filter, decode_hsmm
+from .features import extract_segment_features
+from .model import ProbabilisticWaveModel
 from .review import create_review_table
 from .schema import normalize_ohlcv
 from .segmentation import segment_bars

@@ -7,6 +7,7 @@ point-in-time state stream for the isolated selection layer.
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+
 import numpy as np
 import pandas as pd
 
@@ -158,8 +159,8 @@ def causal_duration_filter(
                 out.at[index, "causal_duration_label"] = UNKNOWN; current = None; dwell = 0; continue
             candidate = str(labels[int(np.argmax(row[probs].to_numpy(float)))])
             minimum = int(min_dwell_bars.get(current, 1)) if isinstance(min_dwell_bars, Mapping) and current else int(min_dwell_bars)
-            if current is None or candidate == current or dwell >= minimum:
-                if candidate != current: current, dwell = candidate, 0
+            if (current is None or candidate == current or dwell >= minimum) and candidate != current:
+                current, dwell = candidate, 0
             out.at[index, "causal_duration_label"] = current
             dwell += int(row.get("n_bars", int(row.end_idx) - int(row.start_idx) + 1))
     return out

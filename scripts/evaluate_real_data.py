@@ -13,7 +13,6 @@ from wave_segments.data import fetch_tushare, fetch_tushare_index
 from wave_segments.pipeline import WavePipeline
 from wave_segments.segmentation import segment_ohlcv
 
-
 SYMBOLS = [
     "000001.SZ", "000333.SZ", "000858.SZ", "300750.SZ",
     "600036.SH", "600276.SH", "600519.SH", "601318.SH",
@@ -67,7 +66,7 @@ def main() -> None:
     reasons = combined.loc[combined.is_unknown, "unknown_reason"].str.get_dummies(sep=";").sum().sort_values(ascending=False)
     class_counts = combined["label"].value_counts()
     metrics = {
-        "symbols": int(bars.symbol.nunique()), "bars": int(len(bars)), "segments": int(len(combined)),
+        "symbols": int(bars.symbol.nunique()), "bars": len(bars), "segments": len(combined),
         "coverage": float((~combined.is_unknown).mean()), "unknown_rate": float(combined.is_unknown.mean()),
         "median_duration_bars": float(combined.duration_bars.median()),
         "duration_p10_p90": [float(combined.duration_bars.quantile(.1)), float(combined.duration_bars.quantile(.9))],

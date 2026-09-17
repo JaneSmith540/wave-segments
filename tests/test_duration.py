@@ -1,7 +1,10 @@
-import numpy as np
 import pandas as pd
 
-from wave_segments.duration import causal_duration_filter, decode_hsmm, geometric_duration_pmf
+from wave_segments.duration import (
+    causal_duration_filter,
+    decode_hsmm,
+    geometric_duration_pmf,
+)
 
 
 def emissions():

@@ -21,7 +21,7 @@ from wave_segments.market_regimes import sample_market_regime
 
 
 def _seed(base: int, model_time: str, replicate: int) -> int:
-    value = f"{base}|{model_time}|symbol-bootstrap|{replicate}".encode("utf-8")
+    value = f"{base}|{model_time}|symbol-bootstrap|{replicate}".encode()
     return int.from_bytes(blake2b(value, digest_size=4).digest(), "little")
 
 
@@ -53,7 +53,6 @@ def main() -> None:
     settings = manifest["config"]
     feature_columns = list(settings["features"])
     probability_columns = sorted(c for c in states if c.startswith("prob_CLUSTER_"))
-    labels = [c.removeprefix("prob_") for c in probability_columns]
     if not probability_columns:
         raise ValueError("No cluster probability fields found")
 
@@ -208,7 +207,7 @@ def main() -> None:
             "slice_dimension": dimension,
             "slice_value": value,
             "model_versions": int(group.oos_model_trained_at.nunique()),
-            "replicate_evaluations": int(len(group)),
+            "replicate_evaluations": len(group),
             "row_replicate_evaluations": int(row_count),
             "baseline_coverage_row_weighted": identified_count / row_count if row_count else np.nan,
             "label_agreement_row_weighted": float(np.average(group.label_agreement, weights=group.rows)),
@@ -271,7 +270,7 @@ def main() -> None:
         "features_path": str(Path(args.features).resolve()),
         "states_path": str(Path(args.states).resolve()),
         "manifest_path": str(Path(args.manifest).resolve()),
-        "model_versions_reconstructed": int(len(folds)),
+        "model_versions_reconstructed": len(folds),
         "replicates_per_fold": args.replicates,
         "resampling_unit": "symbol cluster; draw unique symbols with replacement and retain their full training histories",
         "cluster_alignment": "Hungarian assignment of raw-space GMM reference means, distance scaled by frozen fold RobustScaler",

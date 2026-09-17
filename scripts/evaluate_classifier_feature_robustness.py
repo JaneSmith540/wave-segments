@@ -10,12 +10,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from wave_segments.class_robustness import perturb_features_from_train_scale, probability_total_variation
+from wave_segments.class_robustness import (
+    perturb_features_from_train_scale,
+    probability_total_variation,
+)
 from wave_segments.discovery import DiscoveryConfig, MultiModelDiscoverer
 
 
 def _seed(base: int, model_time: str, noise: float, replicate: int) -> int:
-    value = f"{base}|{model_time}|{noise:.8g}|{replicate}".encode("utf-8")
+    value = f"{base}|{model_time}|{noise:.8g}|{replicate}".encode()
     return int.from_bytes(blake2b(value, digest_size=4).digest(), "little")
 
 
@@ -191,7 +194,7 @@ def main() -> None:
         "states_path": str(Path(args.states).resolve()),
         "model_manifest": str(Path(args.manifest).resolve()),
         "model_versions_reconstructed": len(folds),
-        "scored_rows_with_saved_probabilities": int(len(scored_states)),
+        "scored_rows_with_saved_probabilities": len(scored_states),
         "replicates_per_noise_level": args.replicates,
         "noise_fractions": list(args.noise_fractions),
         "noise_scale_source": "robust MAD scale fit on each frozen training fold only",

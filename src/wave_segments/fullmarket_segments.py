@@ -14,13 +14,14 @@ or fitted model is ever held in memory.
 """
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from hashlib import blake2b
 import json
+from collections.abc import Callable
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from dataclasses import asdict, dataclass, field
+from hashlib import blake2b
 from multiprocessing import get_context
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 from uuid import uuid4
 
 import numpy as np
@@ -287,13 +288,13 @@ def _process_bucket_worker(task: dict[str, Any]) -> dict[str, Any]:
             group = bars.loc[bars["symbol"].isin(names)]
             try:
                 process_group(group)
-            except Exception:
+            except Exception:  # noqa: BLE001 - isolate a bad batch, then retry its symbols individually
                 # A bad symbol must not turn a whole bucket into a false
                 # success; recover the unaffected members individually.
                 for symbol in names:
                     try:
                         process_group(group.loc[group["symbol"].eq(symbol)])
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001 - report failures without aborting unaffected symbols
                         failures.append({"symbol": str(symbol), "error": f"{type(exc).__name__}: {exc}"})
         segments = pd.concat(segment_frames, ignore_index=True) if segment_frames else pd.DataFrame()
         features = pd.concat(feature_frames, ignore_index=True) if feature_frames else pd.DataFrame()
@@ -313,7 +314,7 @@ def _process_bucket_worker(task: dict[str, Any]) -> dict[str, Any]:
         return {"bucket": bucket, "status": "complete" if not failures else "partial",
                 "symbols": int(bars.symbol.nunique()), "bars": len(bars), "segments": len(segments),
                 "failures": failures}
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - convert worker failures into auditable partial results
         # Expected worker errors are reported as an auditable partial bucket;
         # the parent remains the sole manifest writer and can retry later.
         return {"bucket": bucket, "status": "partial", "symbols": None, "bars": None, "segments": None,
@@ -516,7 +517,7 @@ class FullMarketSegmentBuilder:
                     bucket = futures[future]
                     try:
                         result = future.result()
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001 - keep crashed buckets visible and retryable
                         # A crashed process must remain retryable and visible;
                         # never claim an unwritten bucket as complete.
                         result = {"bucket": bucket, "status": "partial", "symbols": None, "bars": None,

@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 from collections import Counter
 from hashlib import sha256
-import json
 from pathlib import Path
 from uuid import uuid4
 
@@ -148,7 +148,7 @@ def run_fullmarket_discovery(
     sample_ids = "\n".join(training["segment_id"].astype(str).tolist()).encode("utf-8")
     summary = {
         "status": "complete", "mode": "offline_transductive_review_only",
-        "training_rows": int(len(training)), "training_years": sorted(
+        "training_rows": len(training), "training_years": sorted(
             pd.to_datetime(training["start"]).dt.year.dropna().astype(int).unique().tolist()),
         "training_ids_sha256": sha256(sample_ids).hexdigest(),
         "predicted_rows": int(sum(label_counts.values())), "label_counts": dict(label_counts),

@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from wave_segments.class_robustness import perturb_features_from_train_scale, probability_total_variation
+from wave_segments.class_robustness import (
+    perturb_features_from_train_scale,
+    probability_total_variation,
+)
 
 
 def test_feature_perturbation_is_seeded_train_scaled_and_holds_structural_fields_fixed():

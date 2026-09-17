@@ -6,15 +6,15 @@ import json
 from collections import defaultdict
 from pathlib import Path
 
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import joblib
 
 from wave_segments.class_robustness import probability_total_variation
 from wave_segments.cluster_bootstrap import (
-    align_by_probability_overlap,
     align_bootstrap_to_reference,
+    align_by_probability_overlap,
     remap_bootstrap_predictions,
     resample_symbols_with_replacement,
 )
@@ -153,7 +153,7 @@ def main() -> None:
         prototype_rows.append({
             "replicate": replicate,
             "bootstrap_rows": len(sample),
-            "training_symbols": int(len(training_symbols)),
+            "training_symbols": len(training_symbols),
             "distinct_symbols_drawn": unique_drawn,
             "training_overlap_alignment_mean_cosine": overlap_similarity,
             "prototype_alignment_rms_train_scale_diagnostic_only": prototype_rms,
@@ -234,8 +234,8 @@ def main() -> None:
         "features_path": str(source.resolve()),
         "discovery_path": str(discovery.resolve()),
         "input_rows": int(summary["predicted_rows"]),
-        "training_rows": int(len(training)),
-        "training_symbols": int(len(training_symbols)),
+        "training_rows": len(training),
+        "training_symbols": len(training_symbols),
         "training_id_sha256_reconstructed": training_hash,
         "training_id_hash_matches": True,
         "baseline_labels_reproduced_exactly": exact_labels,

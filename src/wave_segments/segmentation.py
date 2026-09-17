@@ -7,8 +7,9 @@ merged into probabilistic boundaries.
 """
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
+from itertools import pairwise
 
 import numpy as np
 import pandas as pd
@@ -81,7 +82,7 @@ def _ruptures_boundaries(frame: pd.DataFrame, penalty: float | None) -> list[Bou
     x = (x - x.mean(axis=0)) / np.where(x.std(axis=0) > 1e-10, x.std(axis=0), 1)
     try:
         breaks = rpt.Pelt(model="rbf", min_size=max(3, len(frame) // 30)).fit(x).predict(pen=float(penalty or 5.0))
-    except Exception:
+    except Exception:  # noqa: BLE001 - optional change-point failures fall back to other detectors
         return []
     return [Boundary(int(i - 1), 0.58, "ruptures") for i in breaks[:-1] if 0 < i < len(frame) - 1]
 
@@ -205,7 +206,7 @@ def _merge_boundaries(
     merged: list[Boundary] = []
     for group in groups:
         # Agreement increases confidence, but no source is silently discarded.
-        idx = int(round(np.average([x.index for x in group], weights=[x.probability for x in group])))
+        idx = round(np.average([x.index for x in group], weights=[x.probability for x in group]))
         p = 1 - float(np.prod([1 - x.probability for x in group]))
         merged.append(Boundary(idx, min(.99, p), "+".join(sorted({x.sources for x in group}))))
     # A weak boundary proposed by only one method is not a vote. Strong lone
@@ -278,7 +279,7 @@ def segment_ohlcv(
             cfg.min_boundary_probability, cfg.min_boundary_votes,
             cfg.single_source_min_probability,
         )
-        for seq, (left, right) in enumerate(zip(boundaries[:-1], boundaries[1:])):
+        for seq, (left, right) in enumerate(pairwise(boundaries)):
             # Adjacent legs share their turning bar, a useful intentional overlap.
             rows.append({
                 "segment_id": f"{symbol}:{seq}", "symbol": symbol, "segment_no": seq,
@@ -351,7 +352,7 @@ def segment_ohlcv_causal(
                     strength = (close[i] - extreme_price) / threshold
                     pivots.append((extreme_idx, float(np.clip(.42 + .18 * min(strength, 3), .42, .96)), i))
                     direction, extreme_idx, extreme_price = 1, i, high[i]
-        for seq, (left, right) in enumerate(zip(pivots[:-1], pivots[1:])):
+        for seq, (left, right) in enumerate(pairwise(pivots)):
             left_idx, left_p, left_confirm = left
             right_idx, right_p, right_confirm = right
             if right_idx - left_idx < cfg.min_bars:

@@ -1,3 +1,5 @@
+from itertools import pairwise
+
 import numpy as np
 import pandas as pd
 
@@ -17,7 +19,7 @@ def bars(n=32):
 def fixed_segmenter(frame):
     n = len(frame)
     points = [0, n // 2, n - 1]
-    return pd.DataFrame([{"segment_id": f"AAA:{i}", "symbol": "AAA", "start_idx": a, "end_idx": b} for i, (a, b) in enumerate(zip(points[:-1], points[1:]))])
+    return pd.DataFrame([{"segment_id": f"AAA:{i}", "symbol": "AAA", "start_idx": a, "end_idx": b} for i, (a, b) in enumerate(pairwise(points))])
 
 
 def test_perturbation_preserves_ohlc_invariants_and_is_reproducible():

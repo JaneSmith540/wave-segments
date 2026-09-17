@@ -2,7 +2,11 @@ from __future__ import annotations
 
 import pandas as pd
 
-from wave_segments.market_data import align_financial_announcements, enrich_and_audit_market_data, normalize_market_metadata
+from wave_segments.market_data import (
+    align_financial_announcements,
+    enrich_and_audit_market_data,
+    normalize_market_metadata,
+)
 
 
 def _bars() -> pd.DataFrame:

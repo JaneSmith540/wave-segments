@@ -1,8 +1,12 @@
 import numpy as np
 import pandas as pd
 
-from wave_segments.validation import (CalibratedSegmentClassifier, PurgedWalkForwardSplit,
-                                      resolve_human_annotations, coverage_risk_curve)
+from wave_segments.validation import (
+    CalibratedSegmentClassifier,
+    PurgedWalkForwardSplit,
+    coverage_risk_curve,
+    resolve_human_annotations,
+)
 
 
 def _segments(n=45):

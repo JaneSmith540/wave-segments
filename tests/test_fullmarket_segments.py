@@ -3,12 +3,12 @@ import json
 import pandas as pd
 import pytest
 
+from wave_segments.config import SegmentationConfig
 from wave_segments.fullmarket_segments import (
     FullMarketSegmentBuilder,
     _process_bucket_worker,
     audit_fullmarket_segments,
 )
-from wave_segments.config import SegmentationConfig
 
 
 def _source(tmp_path):

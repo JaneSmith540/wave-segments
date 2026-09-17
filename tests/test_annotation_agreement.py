@@ -5,9 +5,11 @@ import pandas as pd
 
 from wave_segments.analytics import human_annotation_agreement
 from wave_segments.annotation_app import resolve_boundary_correction
-from wave_segments.validation import (annotation_agreement_report,
-                                      boundary_annotation_agreement,
-                                      resolve_human_annotations)
+from wave_segments.validation import (
+    annotation_agreement_report,
+    boundary_annotation_agreement,
+    resolve_human_annotations,
+)
 
 
 def _annotations():

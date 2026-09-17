@@ -7,7 +7,7 @@ window separately: resampling a full history cannot make a boundary causal.
 """
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from hashlib import blake2b
 
 import numpy as np
@@ -16,7 +16,6 @@ import pandas as pd
 from .config import SegmentationConfig
 from .schema import normalize_ohlcv
 from .segmentation import segment_ohlcv, segment_ohlcv_causal
-
 
 Segmenter = Callable[[pd.DataFrame], pd.DataFrame]
 

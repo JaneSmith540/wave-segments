@@ -1,8 +1,11 @@
 """CLI for the resumable bulk Tushare daily dataset builder."""
 from __future__ import annotations
+
 import argparse
 import os
+
 from .bulk_market_data import BulkMarketBuilder, read_security_universe
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build Tushare full-market daily partitions by trade_date")

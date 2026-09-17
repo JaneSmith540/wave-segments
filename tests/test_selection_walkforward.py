@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from wave_segments.selection import build_selection_dataset, walk_forward_cross_sectional_scores
+from wave_segments.selection import (
+    build_selection_dataset,
+    walk_forward_cross_sectional_scores,
+)
 
 
 def _dataset():

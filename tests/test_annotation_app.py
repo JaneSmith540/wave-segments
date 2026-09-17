@@ -3,7 +3,11 @@ from hashlib import blake2b
 
 import pandas as pd
 
-from wave_segments.annotation_app import append_annotation, load_bars_for_symbol, resolve_candidate_status
+from wave_segments.annotation_app import (
+    append_annotation,
+    load_bars_for_symbol,
+    resolve_candidate_status,
+)
 
 
 def test_annotations_are_append_only_and_keep_reviewers(tmp_path):

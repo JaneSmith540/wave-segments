@@ -4,8 +4,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from .segmentation import average_true_range
 from .schema import normalize_ohlcv
+from .segmentation import average_true_range
 
 
 def _safe_corr(a: pd.Series, b: pd.Series) -> float:

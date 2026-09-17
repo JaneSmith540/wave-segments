@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+
 import pandas as pd
 
 from .market_data import enrich_and_audit_market_data

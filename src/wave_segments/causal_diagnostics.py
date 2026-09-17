@@ -21,7 +21,7 @@ def build_causal_state_diagnostics(states: pd.DataFrame) -> dict[str, pd.DataFra
             key = key if isinstance(key, tuple) else (key,)
             row = dict(zip(groups, key))
             row.update({
-                "segments": int(len(part)),
+                "segments": len(part),
                 "identified": int((~part["is_unknown"].astype(bool)).sum()),
                 "unknown": int(part["is_unknown"].astype(bool).sum()),
                 "coverage": float((~part["is_unknown"].astype(bool)).mean()),

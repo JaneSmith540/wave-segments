@@ -11,7 +11,6 @@ import pandas as pd
 from .causal_diagnostics import build_causal_state_diagnostics
 from .discovery import DiscoveryConfig, walk_forward_discovery_states
 
-
 DEFAULT_FEATURES = [
     "cumulative_return", "log_price_slope", "amplitude", "max_drawdown",
     "duration_bars", "return_volatility", "atr_pct_mean", "volume_cv",
@@ -97,11 +96,11 @@ def main() -> None:
     )
     summary = {
         "status": "complete", "mode": "past_only_unsupervised_discovery_review_only",
-        "features_path": str(args.features.resolve()), "rows": int(len(states)),
+        "features_path": str(args.features.resolve()), "rows": len(states),
         "identified_fraction": float((~states["is_unknown"]).mean()),
         "label_counts_not_semantic": {str(k): int(v) for k, v in states["label"].value_counts().items()},
         "unknown_reason_counts": {str(k): int(v) for k, v in states["unknown_reason"].value_counts().items()},
-        "model_versions": int(len(convergence)),
+        "model_versions": len(convergence),
         "nonconverged_model_versions": int((~convergence.astype(bool)).sum()),
         "mixture_nonconverged_reason_rows": int(states["unknown_reason"].str.contains("mixture_nonconverged").sum()),
         "cluster_ids_comparable_across_versions": False,

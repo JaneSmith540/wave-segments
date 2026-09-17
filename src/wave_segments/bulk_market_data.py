@@ -12,18 +12,18 @@ two raw columns and choose an anchor inside each walk-forward training window.
 """
 from __future__ import annotations
 
+import json
+import time
+from collections.abc import Callable, Iterable
+from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from copy import deepcopy
-import json
 from pathlib import Path
-import time
-from typing import Any, Callable, Iterable
+from typing import Any
 from uuid import uuid4
 
 import numpy as np
 import pandas as pd
-
 
 REQUIRED_ENDPOINTS = ("daily", "adj_factor")
 OPTIONAL_ENDPOINTS = ("daily_basic", "stk_limit", "suspend_d")
@@ -155,7 +155,7 @@ def audit_bulk_market_manifest(
                         universe_coverages.append(float(coverage))
                     if minimum_universe_coverage is not None and (coverage is None or coverage < minimum_universe_coverage):
                         issues.append({"trade_date": day, "code": "low_universe_coverage", "rate": coverage})
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - record corrupt/unreadable partitions and continue the audit
                 issues.append({"trade_date": day, "code": "partition_read_error",
                                "error": f"{type(exc).__name__}: {exc}"})
         per_date[day] = result
@@ -304,7 +304,7 @@ class BulkMarketBuilder:
                 # ``future.cancel()``.
                 result = _frame(method(**kwargs))
                 return result, attempt
-            except Exception as exc:  # provider errors are retried and recorded
+            except Exception as exc:  # noqa: BLE001 - vendor client exceptions are retried and recorded
                 error = exc
             if attempt < self.retries and self.sleep_seconds:
                 time.sleep(self.sleep_seconds * attempt)
@@ -320,13 +320,13 @@ class BulkMarketBuilder:
         return sorted(cal_date[is_open & cal_date.notna()].dt.strftime("%Y%m%d").tolist())
 
     def _call_calendar(self) -> tuple[pd.DataFrame, int]:
-        method = getattr(self.pro, "trade_cal")
+        method = self.pro.trade_cal
         error: Exception | None = None
         for attempt in range(1, self.retries + 1):
             try:
                 result = _frame(method(start_date=self.start_date, end_date=self.end_date, is_open="1"))
                 return result, attempt
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - vendor calendar exceptions are retried and recorded
                 error = exc
             if attempt < self.retries and self.sleep_seconds:
                 time.sleep(self.sleep_seconds * attempt)
@@ -349,8 +349,8 @@ class BulkMarketBuilder:
             requested = (*REQUIRED_ENDPOINTS, *self.optional_endpoints)
             prior_endpoint_states = prior.get("endpoints", {})
 
-            def endpoint_cached(name: str) -> bool:
-                state = prior_endpoint_states.get(name, {})
+            def endpoint_cached(name: str, endpoint_states=prior_endpoint_states) -> bool:
+                state = endpoint_states.get(name, {})
                 if state.get("status") != "ok":
                     return False
                 if name in OPTIONAL_ENDPOINTS:
@@ -408,7 +408,7 @@ class BulkMarketBuilder:
                         entry["endpoints"][endpoint]["raw_partition"] = str(raw_partition.relative_to(self.output_dir))
                     if self.progress: self.progress({"event": "endpoint_finished", "trade_date": day, "endpoint": endpoint,
                                                      "status": entry["endpoints"][endpoint]["status"], "rows": len(data)})
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 - endpoint failures are recorded individually for auditability
                     entry["endpoints"][endpoint] = {"status": "failed", "error": f"{type(exc).__name__}: {exc}", "attempts": self.retries}
                     if endpoint in REQUIRED_ENDPOINTS:
                         failed = True

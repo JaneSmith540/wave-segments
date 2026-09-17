@@ -15,7 +15,6 @@ import pandas as pd
 
 from .schema import normalize_ohlcv
 
-
 _DATE_ALIASES = {"ts_code": "symbol", "trade_date": "timestamp", "ann_date": "timestamp"}
 
 

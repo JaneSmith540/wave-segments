@@ -7,11 +7,10 @@ classifier remains independent: no future-return target is ever passed back to i
 """
 from __future__ import annotations
 
-from typing import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 
 import numpy as np
 import pandas as pd
-
 
 _KEYS = ("symbol", "timestamp")
 
@@ -406,8 +405,12 @@ def evaluate_incremental_features(
     if not baseline_features or not wave_features:
         raise ValueError("baseline_features and wave_features must both be non-empty")
     augmented_features = list(dict.fromkeys([*baseline_features, *wave_features]))
-    common = dict(min_train_dates=min_train_dates, min_train_rows=min_train_rows,
-                  retrain_every=retrain_every, ridge_alpha=ridge_alpha)
+    common = {
+        "min_train_dates": min_train_dates,
+        "min_train_rows": min_train_rows,
+        "retrain_every": retrain_every,
+        "ridge_alpha": ridge_alpha,
+    }
     baseline = walk_forward_cross_sectional_scores(dataset, baseline_features, target_col, **common)
     augmented = walk_forward_cross_sectional_scores(dataset, augmented_features, target_col, **common)
     if not baseline.loc[:, _KEYS].equals(augmented.loc[:, _KEYS]):
@@ -417,8 +420,12 @@ def evaluate_incremental_features(
     paired["augmented_oos_score"] = augmented["oos_score"].to_numpy()
     common_rows = paired["baseline_oos_score"].notna() & paired["augmented_oos_score"].notna()
     paired.loc[~common_rows, ["baseline_oos_score", "augmented_oos_score"]] = np.nan
-    eval_kwargs = dict(target_col=target_col, groups=groups,
-                       transaction_cost_bps=transaction_cost_bps, slippage_bps=slippage_bps)
+    eval_kwargs = {
+        "target_col": target_col,
+        "groups": groups,
+        "transaction_cost_bps": transaction_cost_bps,
+        "slippage_bps": slippage_bps,
+    }
     baseline_report = evaluate_selection(paired, "baseline_oos_score", **eval_kwargs)
     augmented_report = evaluate_selection(paired, "augmented_oos_score", **eval_kwargs)
     daily = pd.concat({"baseline": baseline_report["daily_rank_ic"],

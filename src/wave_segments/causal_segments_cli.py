@@ -8,8 +8,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .config import SegmentationConfig
 from .causal_diagnostics import build_causal_state_diagnostics
+from .config import SegmentationConfig
 from .discovery import DiscoveryConfig, walk_forward_discovery_states
 from .features import extract_segment_features
 from .segmentation import segment_ohlcv_causal
@@ -86,7 +86,7 @@ def main() -> None:
         bootstrap_summary = {
             "iterations": config.bootstrap_iterations,
             "tolerance_bars": config.bootstrap_tolerance,
-            "boundary_rows": int(len(stability)),
+            "boundary_rows": len(stability),
             "mean_frequency": float(stability["stability_frequency"].mean()),
             "p10_frequency": float(stability["stability_frequency"].quantile(.10)),
             "fraction_below_0_5": float((stability["stability_frequency"] < .5).mean()),
@@ -151,7 +151,7 @@ def main() -> None:
             diagnostic_paths[name] = path.name
         outputs["diagnostics"] = diagnostic_paths
         discovery_summary = {
-            "rows": int(len(states)),
+            "rows": len(states),
             "identified_fraction": float((~states["is_unknown"]).mean()),
             "aggregate_label_counts_not_comparable": {
                 str(k): int(v) for k, v in states["label"].value_counts(dropna=False).items()
@@ -186,9 +186,9 @@ def main() -> None:
         "mode": ("causal_atr_zigzag_with_past_only_discovery_states"
                  if args.discover_oos else "causal_atr_zigzag_candidates_only"),
         "bars_path": str(args.bars.resolve()),
-        "bars_rows": int(len(bars)),
+        "bars_rows": len(bars),
         "symbols": int(bars.get("symbol", bars.get("ts_code", pd.Series(dtype=str))).nunique()),
-        "segments": int(len(segments)),
+        "segments": len(segments),
         "unclosed_tail_emitted": False,
         "availability_field": "available_at",
         "boundary_probability_is_calibrated": False,

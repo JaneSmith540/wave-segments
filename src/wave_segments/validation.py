@@ -6,20 +6,24 @@ validation belongs in a separate layer.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
-from itertools import combinations
 import json
-from typing import Iterator, Sequence
+from collections.abc import Iterator, Sequence
+from dataclasses import dataclass
+from itertools import combinations, pairwise
 
 import numpy as np
 import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
+from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (balanced_accuracy_score, log_loss,
-                             precision_recall_fscore_support, f1_score)
+from sklearn.metrics import (
+    balanced_accuracy_score,
+    f1_score,
+    log_loss,
+    precision_recall_fscore_support,
+)
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
 from sklearn.tree import DecisionTreeClassifier
 
 UNKNOWN = "UNKNOWN"
@@ -160,7 +164,7 @@ def resolve_human_annotations(annotations: pd.DataFrame, segment_col: str = "seg
             raw_agreement = float(np.average(pair[a].eq(pair[b]), weights=weights))
             kappa = _weighted_cohen_kappa(pair[a].astype(str), pair[b].astype(str), weights)
             agreements.append(raw_agreement); kappas.append(kappa)
-            pair_details.append({"annotator_a": str(a), "annotator_b": str(b), "shared_segments": int(len(pair)),
+            pair_details.append({"annotator_a": str(a), "annotator_b": str(b), "shared_segments": len(pair),
                                  "weighted_segments": float(weights.sum()), "raw_agreement": raw_agreement,
                                  "cohen_kappa": kappa})
     multi = pivot.dropna(thresh=2)
@@ -369,7 +373,7 @@ def reliability_table(y_true: Sequence[str], probabilities: np.ndarray,
     weights = np.ones(len(y), float) if sample_weight is None else np.asarray(sample_weight, float)
     rows = []
     edges = np.linspace(0, 1, bins + 1)
-    for number, (lo, hi) in enumerate(zip(edges[:-1], edges[1:])):
+    for number, (lo, hi) in enumerate(pairwise(edges)):
         mask = (confidence >= lo) & ((confidence < hi) if hi < 1 else confidence <= hi)
         rows.append({"bin": number, "lower": float(lo), "upper": float(hi),
                      "count": int(mask.sum()),
@@ -409,7 +413,7 @@ class CalibratedSegmentClassifier:
                  if self.estimator == "logistic" else DecisionTreeClassifier(max_depth=4, min_samples_leaf=8, class_weight="balanced", random_state=self.random_state))
         return make_pipeline(SimpleImputer(strategy="median"), StandardScaler(), model)
 
-    def fit(self, train: pd.DataFrame, calibration: pd.DataFrame, label_col: str = "consensus_label") -> "CalibratedSegmentClassifier":
+    def fit(self, train: pd.DataFrame, calibration: pd.DataFrame, label_col: str = "consensus_label") -> CalibratedSegmentClassifier:
         self.feature_columns = infer_validation_features(train, self.feature_columns)
         assert_descriptive_features(self.feature_columns)
         train = train[train[label_col].notna() & train[label_col].ne(UNKNOWN)]

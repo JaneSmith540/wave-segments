@@ -1,6 +1,9 @@
 import pandas as pd
 
-from wave_segments.segmentation_sensitivity import compare_causal_boundaries, segment_distribution
+from wave_segments.segmentation_sensitivity import (
+    compare_causal_boundaries,
+    segment_distribution,
+)
 
 
 def test_boundary_parameter_agreement_within_tolerance_and_year_breakdown():

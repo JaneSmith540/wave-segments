@@ -6,7 +6,11 @@ import json
 import os
 from pathlib import Path
 
-from .bulk_market_data import BulkMarketBuilder, audit_bulk_market_manifest, read_security_universe
+from .bulk_market_data import (
+    BulkMarketBuilder,
+    audit_bulk_market_manifest,
+    read_security_universe,
+)
 
 
 def main() -> None:

@@ -4,11 +4,15 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
-from .validation import (CalibratedSegmentClassifier, PurgedWalkForwardSplit,
-                         annotation_agreement_report)
+from .validation import (
+    CalibratedSegmentClassifier,
+    PurgedWalkForwardSplit,
+    annotation_agreement_report,
+)
 from .visualization import plot_coverage_risk, plot_reliability_diagram
 
 

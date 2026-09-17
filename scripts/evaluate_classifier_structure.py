@@ -64,8 +64,8 @@ def main() -> None:
 
     report = {
         "input": str(Path(args.states).resolve()),
-        "rows": int(len(states)),
-        "model_versions": int(len(summary)),
+        "rows": len(states),
+        "model_versions": len(summary),
         "forward_return_fields_used": False,
         "semantic_accuracy_estimated": False,
         "probability_calibration_estimated": False,

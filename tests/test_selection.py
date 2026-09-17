@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from wave_segments.selection import (
     assess_selection_evidence,
@@ -10,7 +11,6 @@ from wave_segments.selection import (
     evaluate_incremental_features,
     evaluate_selection,
 )
-import pytest
 
 
 def _bars() -> pd.DataFrame:

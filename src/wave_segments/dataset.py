@@ -1,11 +1,11 @@
 """Resumable, point-in-time-aware market dataset construction."""
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-from pathlib import Path
-from typing import Callable, Iterable
 import json
 import time
+from collections.abc import Callable, Iterable
+from dataclasses import asdict, dataclass
+from pathlib import Path
 
 import pandas as pd
 
@@ -103,7 +103,7 @@ class ResumableDatasetBuilder:
                         if progress: progress({"status": "downloaded", "symbol": symbol, "start": start, "end": end, "rows": len(frame)})
                         last_error = None
                         break
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001 - injected/vendor fetcher failures are retried and recorded
                         last_error = exc
                         if attempt + 1 < max(1, spec.max_retries):
                             time.sleep(spec.retry_delay_seconds * (attempt + 1))

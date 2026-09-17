@@ -5,7 +5,9 @@ import pandas as pd
 import pytest
 
 from wave_segments.discovery import (
-    DiscoveryConfig, MultiModelDiscoverer, infer_discovery_features,
+    DiscoveryConfig,
+    MultiModelDiscoverer,
+    infer_discovery_features,
     walk_forward_discovery_states,
 )
 
@@ -89,7 +91,9 @@ def test_nonconverged_gmm_ensemble_is_a_first_class_unknown_gate(monkeypatch):
 
 
 def test_nonconverged_dpgmm_is_a_first_class_unknown_gate(monkeypatch):
-    from sklearn.mixture import BayesianGaussianMixture as SklearnBayesianGaussianMixture
+    from sklearn.mixture import (
+        BayesianGaussianMixture as SklearnBayesianGaussianMixture,
+    )
 
     class NonConvergingDPGMM(SklearnBayesianGaussianMixture):
         def fit(self, X, y=None):

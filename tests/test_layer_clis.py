@@ -1,7 +1,6 @@
 import json
 import sys
 
-import numpy as np
 import pandas as pd
 
 from wave_segments.classification_cli import main as classification_main

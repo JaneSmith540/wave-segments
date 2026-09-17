@@ -4,10 +4,16 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
-from .selection import assess_selection_evidence, build_selection_dataset, evaluate_selection, walk_forward_cross_sectional_scores
+from .selection import (
+    assess_selection_evidence,
+    build_selection_dataset,
+    evaluate_selection,
+    walk_forward_cross_sectional_scores,
+)
 
 
 def _load(path: str) -> pd.DataFrame:

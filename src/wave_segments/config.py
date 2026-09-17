@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
-import json
 
 
 @dataclass
@@ -68,7 +68,7 @@ class PipelineConfig:
     output_dir: str = "outputs"
 
     @classmethod
-    def from_json(cls, path: str | Path) -> "PipelineConfig":
+    def from_json(cls, path: str | Path) -> PipelineConfig:
         raw: dict[str, Any] = json.loads(Path(path).read_text(encoding="utf-8"))
         return cls(
             segmentation=SegmentationConfig(**raw.get("segmentation", {})),
