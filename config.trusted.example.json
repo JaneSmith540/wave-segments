@@ -1,0 +1,40 @@
+{
+  "output_dir": "outputs_trusted",
+  "discovery_backend": "ensemble",
+  "segmentation": {
+    "min_bars": 4,
+    "atr_reversal": 2.2,
+    "merge_tolerance": 2,
+    "min_boundary_probability": 0.34,
+    "min_boundary_votes": 2,
+    "single_source_min_probability": 0.75,
+    "bootstrap_iterations": 20,
+    "bootstrap_tolerance": 3,
+    "bootstrap_price_noise": 0.002,
+    "bootstrap_volume_noise": 0.08,
+    "use_adaptive_structure": true,
+    "use_ruptures": true,
+    "use_fractal_pivots": true,
+    "use_bocpd": true
+  },
+  "duration": {
+    "enabled": true,
+    "min_segments": 2,
+    "max_segments": 20,
+    "causal_min_dwell_bars": 5
+  },
+  "model": {
+    "n_components": 5,
+    "ensemble_size": 5,
+    "min_max_probability": 0.6,
+    "max_normalized_entropy": 0.65,
+    "max_disagreement": 0.18,
+    "min_density_quantile": 0.05,
+    "min_recognizability": 0.55,
+    "max_boundary_uncertainty": 0.35,
+    "max_context_conflict": 0.5,
+    "min_cluster_samples": 20,
+    "min_cluster_symbols": 4,
+    "min_cluster_years": 2
+  }
+}

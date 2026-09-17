@@ -1,0 +1,32 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+dist/
+build/
+*.egg-info/
+
+# Local market data, annotations, models, reports, and generated figures.
+/data/
+/outputs*/
+*.parquet
+*.joblib
+*.pkl
+*.pickle
+*.model
+
+# Credentials and machine-local configuration.
+.env
+.env.*
+!.env.example
+*secret*.json
+*credentials*.json
+.streamlit/secrets.toml
+*.pem
+*.key
+
+# Editor / operating-system noise.
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
